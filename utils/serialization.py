@@ -142,5 +142,55 @@ def ser_to_obj_multiple(img, ver_lst, tri, height, wfp):
     print(f'Dump tp {wfp}')
 
 
+def write_obj_with_texture(vertices, triangles, uv_coords, height, wfp):
+    """ Save 3D face model with texture represented by texture map.
+    Ref: https://github.com/patrikhuber/eos/blob/bd00155ebae4b1a13b08bf5a991694d682abbada/include/eos/core/Mesh.hpp
+    Args:
+        vertices: shape = (nver, 3)
+        triangles: shape = (ntri, 3)
+        uv_coords: shape = (nver, 3) max value<=1
+        height: height of the image
+        wfp: file pointer
+    """
+    if wfp.split('.')[-1] != 'obj':
+        wfp = wfp + '.obj'
+    mtl_name = wfp.replace('.obj', '.mtl')
+    texture_name = wfp.replace('.obj', '_texture.jpg')
+
+    triangles = triangles.copy()
+    triangles += 1  # mesh lab start with 1
+
+    # write obj
+    with open(wfp, 'w') as f:
+        # first line: write mtlib(material library)
+        s = "mtllib {}\n".format(mtl_name)
+        f.write(s)
+
+        # write vertices
+        for i in range(vertices.shape[1]):
+            x, y, z = vertices[:, i]
+            s = 'v {} {} {}\n'.format(x, height - y, z)
+            f.write(s)
+
+        # write uv coords
+        for i in range(uv_coords.shape[0]):
+            s = 'vt {} {}\n'.format(uv_coords[i, 0], 1 - uv_coords[i, 1])
+            f.write(s)
+
+        f.write("usemtl FaceTexture\n")
+
+        # write f: ver ind/ uv ind
+        for i in range(triangles.shape[0]):
+            s = 'f {}/{} {}/{} {}/{}\n'.format(triangles[i, 2], triangles[i, 2], triangles[i, 1], triangles[i, 1],
+                                               triangles[i, 0], triangles[i, 0])
+            f.write(s)
+
+    # write mtl
+    with open(mtl_name, 'w') as f:
+        f.write("newmtl FaceTexture\n")
+        s = 'map_Kd {}\n'.format(texture_name)  # map to image
+        f.write(s)
+
+
 ser_to_ply = ser_to_ply_multiple  # ser_to_ply_single
 ser_to_obj = ser_to_obj_multiple  # ser_to_obj_multiple

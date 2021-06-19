@@ -126,18 +126,35 @@ class TDDFA(object):
         size = self.size
 
         ver_lst = []
+        std_ver_lst = []
+
         for param, roi_box in zip(param_lst, roi_box_lst):
+
+            R, offset, alpha_shp, alpha_exp = _parse_param(param)
+
             if dense_flag:
-                R, offset, alpha_shp, alpha_exp = _parse_param(param)
                 pts3d = R @ (self.bfm.u + self.bfm.w_shp @ alpha_shp + self.bfm.w_exp @ alpha_exp). \
                     reshape(3, -1, order='F') + offset
                 pts3d = similar_transform(pts3d, roi_box, size)
             else:
-                R, offset, alpha_shp, alpha_exp = _parse_param(param)
                 pts3d = R @ (self.bfm.u_base + self.bfm.w_shp_base @ alpha_shp + self.bfm.w_exp_base @ alpha_exp). \
                     reshape(3, -1, order='F') + offset
                 pts3d = similar_transform(pts3d, roi_box, size)
 
             ver_lst.append(pts3d)
 
-        return ver_lst
+            param[:9] = self.param_mean[:9]
+            R, offset, alpha_shp, alpha_exp = _parse_param(param)
+
+            if dense_flag:
+                pts3d = R @ (self.bfm.u + self.bfm.w_shp @ alpha_shp + self.bfm.w_exp @ alpha_exp). \
+                    reshape(3, -1, order='F') + offset
+                pts3d = similar_transform(pts3d, roi_box, size)
+            else:
+                pts3d = R @ (self.bfm.u_base + self.bfm.w_shp_base @ alpha_shp + self.bfm.w_exp_base @ alpha_exp). \
+                    reshape(3, -1, order='F') + offset
+                pts3d = similar_transform(pts3d, roi_box, size)
+
+            std_ver_lst.append(pts3d)
+
+        return ver_lst, std_ver_lst

@@ -92,7 +92,7 @@ def uv_tex(img, ver_lst, tri, uv_h=256, uv_w=256, uv_c=3, show_flag=False, wfp=N
 
     if wfp is not None:
         cv2.imwrite(wfp, res)
-        print(f'Save visualization result to {wfp}')
+        #print(f'Save visualization result to {wfp}')
 
     if show_flag:
         plot_image(res)

@@ -58,11 +58,13 @@ def main(args):
             boxes = face_boxes(frame_bgr)
             boxes = [boxes[0]]
             param_lst, roi_box_lst = tddfa(frame_bgr, boxes)
-            ver = tddfa.recon_vers(param_lst, roi_box_lst, dense_flag=dense_flag)[0]
+            ver, _ = tddfa.recon_vers(param_lst, roi_box_lst, dense_flag=dense_flag)
+            ver = ver[0]
 
             # refine
             param_lst, roi_box_lst = tddfa(frame_bgr, [ver], crop_policy='landmark')
-            ver = tddfa.recon_vers(param_lst, roi_box_lst, dense_flag=dense_flag)[0]
+            ver, _ = tddfa.recon_vers(param_lst, roi_box_lst, dense_flag=dense_flag)
+            ver = ver[0]
 
             # padding queue
             for _ in range(n_pre):
@@ -82,7 +84,8 @@ def main(args):
                 boxes = [boxes[0]]
                 param_lst, roi_box_lst = tddfa(frame_bgr, boxes)
 
-            ver = tddfa.recon_vers(param_lst, roi_box_lst, dense_flag=dense_flag)[0]
+            ver, _ = tddfa.recon_vers(param_lst, roi_box_lst, dense_flag=dense_flag)
+            ver = ver[0]
 
             queue_ver.append(ver.copy())
             queue_frame.append(frame_bgr.copy())

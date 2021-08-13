@@ -67,11 +67,13 @@ def main(args):
             boxes = face_boxes(frame_bgr)
             boxes = [boxes[0]]
             param_lst, roi_box_lst = tddfa(frame_bgr, boxes)
-            ver = tddfa.recon_vers(param_lst, roi_box_lst, dense_flag=dense_flag)[0]
+            ver, std_ver = tddfa.recon_vers(param_lst, roi_box_lst, dense_flag=dense_flag)
+            ver = ver[0]
 
             # refine
             param_lst, roi_box_lst = tddfa(frame_bgr, [ver], crop_policy='landmark')
-            ver = tddfa.recon_vers(param_lst, roi_box_lst, dense_flag=dense_flag)[0]
+            ver, std_ver = tddfa.recon_vers(param_lst, roi_box_lst, dense_flag=dense_flag)
+            ver = ver[0]
 
             # padding queue
             for _ in range(n_pre):
@@ -92,7 +94,8 @@ def main(args):
                 boxes = [boxes[0]]
                 param_lst, roi_box_lst = tddfa(frame_bgr, boxes)
 
-            ver = tddfa.recon_vers(param_lst, roi_box_lst, dense_flag=dense_flag)[0]
+            ver, std_ver = tddfa.recon_vers(param_lst, roi_box_lst, dense_flag=dense_flag)
+            ver = ver[0]
 
             queue_ver.append(ver.copy())
             queue_frame.append(frame_bgr.copy())
@@ -149,7 +152,7 @@ if __name__ == '__main__':
     parser.add_argument('-m', '--mode', default='cpu', type=str, help='gpu or cpu mode')
     parser.add_argument('-n_pre', default=1, type=int, help='the pre frames of smoothing')
     parser.add_argument('-n_next', default=1, type=int, help='the next frames of smoothing')
-    parser.add_argument('-o', '--opt', type=str, default='2d_sparse', choices=['2d_sparse', '2d_dense', '3d'])
+    parser.add_argument('-o', '--opt', type=str, default='3d', choices=['2d_sparse', '2d_dense', '3d'])
     parser.add_argument('-s', '--start', default=-1, type=int, help='the started frames')
     parser.add_argument('-e', '--end', default=-1, type=int, help='the end frame')
     parser.add_argument('--onnx', action='store_true', default=False)

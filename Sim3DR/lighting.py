@@ -66,7 +66,7 @@ class RenderPipeline(object):
             render_img = rasterize(vertices, triangles, light, bg=bg)
             return render_img
         else:
-            texture *= light
+            #texture *= light
             render_img = rasterize(vertices, triangles, texture, bg=bg)
             return render_img
 

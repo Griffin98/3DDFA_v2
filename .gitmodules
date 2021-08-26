@@ -1,0 +1,3 @@
+[submodule "MeshPyIO"]
+	path = MeshPyIO
+	url = https://github.com/ZouaghiHoussem/MeshPyIO

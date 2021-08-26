@@ -50,3 +50,30 @@ def render(img, ver_lst, tri, alpha=0.6, show_flag=False, wfp=None, with_bg_flag
         plot_image(res)
 
     return res
+
+
+def render_with_colors(img, ver_lst, tri, colors, alpha=0.5, show_flag=False, wfp=None, with_bg_flag=False):
+
+    if with_bg_flag:
+        overlap = img.copy()
+    else:
+        overlap = np.zeros_like(img)
+
+
+    for ver_ in ver_lst:
+        ver = _to_ctype(ver_.T)  # transpose
+        overlap = render_app(ver, tri, overlap, colors)
+
+    if with_bg_flag:
+        res = cv2.addWeighted(img, 1 - alpha, overlap, alpha, 0)
+    else:
+        res = overlap
+
+    if wfp is not None:
+        cv2.imwrite(wfp, res)
+        #print(f'Save visualization result to {wfp}')
+
+    if show_flag:
+        plot_image(res)
+
+    return res

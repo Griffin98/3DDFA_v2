@@ -155,7 +155,7 @@ def write_obj_with_texture(vertices, triangles, uv_coords, height, wfp):
     if wfp.split('.')[-1] != 'obj':
         wfp = wfp + '.obj'
     mtl_name = wfp.replace('.obj', '.mtl')
-    texture_name = wfp.replace('.obj', '_texture.jpg')
+    texture_name = 'texture.png'
 
     triangles = triangles.copy()
     triangles += 1  # mesh lab start with 1
